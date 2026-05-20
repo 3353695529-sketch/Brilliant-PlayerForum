@@ -1,0 +1,368 @@
+<<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brilliant Player Forum</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#0f172a;
+color:white;
+padding:20px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+}
+
+h1{
+text-align:center;
+margin-bottom:20px;
+color:#60a5fa;
+}
+
+.card{
+background:#1e293b;
+padding:15px;
+border-radius:12px;
+margin-bottom:20px;
+}
+
+input,textarea{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+background:#334155;
+color:white;
+}
+
+button{
+margin-top:10px;
+padding:12px 18px;
+border:none;
+border-radius:8px;
+background:#3b82f6;
+color:white;
+cursor:pointer;
+}
+
+button:hover{
+background:#2563eb;
+}
+
+.post{
+background:#1e293b;
+padding:15px;
+border-radius:12px;
+margin-top:15px;
+}
+
+.username{
+color:#60a5fa;
+font-weight:bold;
+}
+
+.time{
+font-size:12px;
+color:#94a3b8;
+margin-top:5px;
+}
+
+.content{
+margin-top:10px;
+line-height:1.5;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.userinfo{
+color:#94a3b8;
+}
+
+.logout{
+background:#ef4444;
+}
+
+.logout:hover{
+background:#dc2626;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="topbar">
+<h1>Brilliant Player Forum</h1>
+
+<div class="userinfo" id="userinfo">
+未登录
+</div>
+</div>
+
+<div class="card">
+
+<h2>注册 / 登录</h2>
+
+<input type="email" id="email" placeholder="邮箱">
+
+<input type="password" id="password" placeholder="密码">
+
+<button onclick="register()">注册</button>
+
+<button onclick="login()">登录</button>
+
+<button class="logout" onclick="logout()">
+退出登录
+</button>
+
+</div>
+
+<div class="card">
+
+<textarea id="message" rows="4"
+placeholder="输入帖子内容..."></textarea>
+
+<button onclick="sendPost()">发布帖子</button>
+
+</div>
+
+<div id="posts"></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+addDoc,
+query,
+orderBy,
+onSnapshot
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCVXeD0tqRGs0naZlYV84y1O1YRPq3kYpk",
+
+authDomain:
+"brilliant-player-forum-900b2.firebaseapp.com",
+
+projectId:
+"brilliant-player-forum-900b2",
+
+storageBucket:
+"brilliant-player-forum-900b2.firebasestorage.app",
+
+messagingSenderId:
+"241015928791",
+
+appId:
+"1:241015928791:web:0b79d82f74de79bce37d92",
+
+measurementId:
+"G-J9D9H1BG7R"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+const auth = getAuth(app);
+
+let currentUser = null;
+
+window.register = async function(){
+
+const email =
+document.getElementById("email").value;
+
+const password =
+document.getElementById("password").value;
+
+try{
+
+await createUserWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+alert("注册成功");
+
+}catch(err){
+
+alert(err.message);
+
+}
+
+}
+
+window.login = async function(){
+
+const email =
+document.getElementById("email").value;
+
+const password =
+document.getElementById("password").value;
+
+try{
+
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+alert("登录成功");
+
+}catch(err){
+
+alert(err.message);
+
+}
+
+}
+
+window.logout = async function(){
+
+await signOut(auth);
+
+alert("已退出登录");
+
+}
+
+onAuthStateChanged(auth,(user)=>{
+
+currentUser = user;
+
+const userinfo =
+document.getElementById("userinfo");
+
+if(user){
+
+userinfo.innerHTML =
+`当前用户：${user.email}`;
+
+}else{
+
+userinfo.innerHTML =
+"未登录";
+
+}
+
+});
+
+window.sendPost = async function(){
+
+if(!currentUser){
+
+alert("请先登录");
+
+return;
+
+}
+
+const message =
+document.getElementById("message").value;
+
+if(!message){
+
+alert("请输入内容");
+
+return;
+
+}
+
+await addDoc(collection(db,"posts"),{
+
+username: currentUser.email,
+
+message,
+
+time: Date.now()
+
+});
+
+document.getElementById("message").value = "";
+
+}
+
+const q = query(
+collection(db,"posts"),
+orderBy("time","desc")
+);
+
+onSnapshot(q,(snapshot)=>{
+
+const postsDiv =
+document.getElementById("posts");
+
+postsDiv.innerHTML = "";
+
+snapshot.forEach((doc)=>{
+
+const post = doc.data();
+
+postsDiv.innerHTML += `
+
+<div class="post">
+
+<div class="username">
+${post.username}
+</div>
+
+<div class="content">
+${post.message}
+</div>
+
+<div class="time">
+${new Date(post.time).toLocaleString()}
+</div>
+
+</div>
+
+`;
+
+});
+
+});
+
+</script>
+
+</body>
+</html>
