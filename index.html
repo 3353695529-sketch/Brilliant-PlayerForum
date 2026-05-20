@@ -1,8 +1,13 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
 <title>Brilliant Player Forum</title>
 
 <style>
@@ -11,89 +16,92 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial;
+font-family:Arial,sans-serif;
 }
 
 body{
 background:#0f172a;
 color:white;
-padding:20px;
+padding:15px;
 }
 
 .container{
+width:100%;
 max-width:900px;
 margin:auto;
-}
-
-h1{
-text-align:center;
-margin-bottom:20px;
-color:#60a5fa;
-}
-
-.card{
-background:#1e293b;
-padding:15px;
-border-radius:12px;
-margin-bottom:20px;
-}
-
-input,textarea{
-width:100%;
-padding:12px;
-margin-top:10px;
-border:none;
-border-radius:8px;
-background:#334155;
-color:white;
-}
-
-button{
-margin-top:10px;
-padding:12px 18px;
-border:none;
-border-radius:8px;
-background:#3b82f6;
-color:white;
-cursor:pointer;
-}
-
-button:hover{
-background:#2563eb;
-}
-
-.post{
-background:#1e293b;
-padding:15px;
-border-radius:12px;
-margin-top:15px;
-}
-
-.username{
-color:#60a5fa;
-font-weight:bold;
-}
-
-.time{
-font-size:12px;
-color:#94a3b8;
-margin-top:5px;
-}
-
-.content{
-margin-top:10px;
-line-height:1.5;
 }
 
 .topbar{
 display:flex;
 justify-content:space-between;
 align-items:center;
+gap:10px;
 margin-bottom:20px;
+flex-wrap:wrap;
+}
+
+h1{
+font-size:32px;
+color:#60a5fa;
+word-break:break-word;
 }
 
 .userinfo{
 color:#94a3b8;
+font-size:14px;
+}
+
+.card{
+background:#1e293b;
+padding:18px;
+border-radius:16px;
+margin-bottom:20px;
+box-shadow:0 0 10px rgba(0,0,0,0.3);
+}
+
+h2{
+margin-bottom:15px;
+font-size:22px;
+}
+
+input,
+textarea{
+width:100%;
+padding:14px;
+margin-top:12px;
+border:none;
+border-radius:10px;
+background:#334155;
+color:white;
+font-size:16px;
+outline:none;
+}
+
+textarea{
+resize:none;
+min-height:120px;
+}
+
+input:focus,
+textarea:focus{
+outline:2px solid #3b82f6;
+}
+
+button{
+margin-top:12px;
+padding:14px 18px;
+border:none;
+border-radius:10px;
+background:#3b82f6;
+color:white;
+cursor:pointer;
+font-size:16px;
+width:100%;
+transition:0.2s;
+}
+
+button:hover{
+background:#2563eb;
 }
 
 .logout{
@@ -104,7 +112,92 @@ background:#ef4444;
 background:#dc2626;
 }
 
+.post{
+background:#1e293b;
+padding:18px;
+border-radius:16px;
+margin-top:18px;
+word-break:break-word;
+box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+.username{
+color:#60a5fa;
+font-weight:bold;
+font-size:16px;
+}
+
+.content{
+margin-top:12px;
+line-height:1.7;
+font-size:16px;
+white-space:pre-wrap;
+}
+
+.time{
+margin-top:10px;
+font-size:13px;
+color:#94a3b8;
+}
+
+/* 手机端优化 */
+
+@media (max-width:768px){
+
+body{
+padding:10px;
+}
+
+h1{
+font-size:24px;
+}
+
+.card{
+padding:15px;
+border-radius:14px;
+}
+
+button{
+font-size:15px;
+padding:13px;
+}
+
+input,
+textarea{
+font-size:16px;
+}
+
+.post{
+padding:15px;
+}
+
+}
+
+/* 超小屏优化 */
+
+@media (max-width:480px){
+
+.topbar{
+flex-direction:column;
+align-items:flex-start;
+}
+
+h1{
+font-size:22px;
+}
+
+.userinfo{
+font-size:13px;
+}
+
+button{
+padding:12px;
+}
+
+}
+
 </style>
+
 </head>
 
 <body>
@@ -112,37 +205,57 @@ background:#dc2626;
 <div class="container">
 
 <div class="topbar">
+
 <h1>Brilliant Player Forum</h1>
 
 <div class="userinfo" id="userinfo">
 未登录
 </div>
+
 </div>
 
 <div class="card">
 
 <h2>注册 / 登录</h2>
 
-<input type="email" id="email" placeholder="邮箱">
+<input
+type="email"
+id="email"
+placeholder="邮箱">
 
-<input type="password" id="password" placeholder="密码">
+<input
+type="password"
+id="password"
+placeholder="密码">
 
-<button onclick="register()">注册</button>
+<button onclick="register()">
+注册
+</button>
 
-<button onclick="login()">登录</button>
+<button onclick="login()">
+登录
+</button>
 
-<button class="logout" onclick="logout()">
+<button
+class="logout"
+onclick="logout()">
+
 退出登录
+
 </button>
 
 </div>
 
 <div class="card">
 
-<textarea id="message" rows="4"
+<textarea
+id="message"
+rows="4"
 placeholder="输入帖子内容..."></textarea>
 
-<button onclick="sendPost()">发布帖子</button>
+<button onclick="sendPost()">
+发布帖子
+</button>
 
 </div>
 
@@ -153,30 +266,38 @@ placeholder="输入帖子内容..."></textarea>
 <script type="module">
 
 import { initializeApp }
+
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
+
 getFirestore,
 collection,
 addDoc,
 query,
 orderBy,
 onSnapshot
+
 }
+
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import {
+
 getAuth,
 createUserWithEmailAndPassword,
 signInWithEmailAndPassword,
 signOut,
 onAuthStateChanged
+
 }
+
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
 
-apiKey: "AIzaSyCVXeD0tqRGs0naZlYV84y1O1YRPq3kYpk",
+apiKey:
+"AIzaSyCVXeD0tqRGs0naZlYV84y1O1YRPq3kYpk",
 
 authDomain:
 "brilliant-player-forum-900b2.firebaseapp.com",
@@ -198,13 +319,18 @@ measurementId:
 
 };
 
-const app = initializeApp(firebaseConfig);
+const app =
+initializeApp(firebaseConfig);
 
-const db = getFirestore(app);
+const db =
+getFirestore(app);
 
-const auth = getAuth(app);
+const auth =
+getAuth(app);
 
 let currentUser = null;
+
+/* 注册 */
 
 window.register = async function(){
 
@@ -214,12 +340,22 @@ document.getElementById("email").value;
 const password =
 document.getElementById("password").value;
 
+if(!email || !password){
+
+alert("请输入邮箱和密码");
+
+return;
+
+}
+
 try{
 
 await createUserWithEmailAndPassword(
+
 auth,
 email,
 password
+
 );
 
 alert("注册成功");
@@ -232,6 +368,8 @@ alert(err.message);
 
 }
 
+/* 登录 */
+
 window.login = async function(){
 
 const email =
@@ -240,12 +378,22 @@ document.getElementById("email").value;
 const password =
 document.getElementById("password").value;
 
+if(!email || !password){
+
+alert("请输入邮箱和密码");
+
+return;
+
+}
+
 try{
 
 await signInWithEmailAndPassword(
+
 auth,
 email,
 password
+
 );
 
 alert("登录成功");
@@ -258,6 +406,8 @@ alert(err.message);
 
 }
 
+/* 退出 */
+
 window.logout = async function(){
 
 await signOut(auth);
@@ -265,6 +415,8 @@ await signOut(auth);
 alert("已退出登录");
 
 }
+
+/* 用户状态 */
 
 onAuthStateChanged(auth,(user)=>{
 
@@ -287,6 +439,8 @@ userinfo.innerHTML =
 
 });
 
+/* 发帖 */
+
 window.sendPost = async function(){
 
 if(!currentUser){
@@ -308,23 +462,35 @@ return;
 
 }
 
-await addDoc(collection(db,"posts"),{
+await addDoc(
 
-username: currentUser.email,
+collection(db,"posts"),
+
+{
+
+username:
+currentUser.email,
 
 message,
 
-time: Date.now()
+time:Date.now()
 
-});
+}
+
+);
 
 document.getElementById("message").value = "";
 
 }
 
+/* 实时帖子 */
+
 const q = query(
+
 collection(db,"posts"),
+
 orderBy("time","desc")
+
 );
 
 onSnapshot(q,(snapshot)=>{
@@ -365,4 +531,5 @@ ${new Date(post.time).toLocaleString()}
 </script>
 
 </body>
+
 </html>
