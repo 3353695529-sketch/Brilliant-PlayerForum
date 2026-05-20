@@ -8,10 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>Brilliant Daily</title>
-<link rel="icon" href="https://img.cdn1.vip/i/6a0d663ee37bc_1779263038.jpeg">
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<title>Brilliant Player Forum</title>
 
 <style>
 
@@ -29,6 +26,7 @@ padding:15px;
 }
 
 .container{
+width:100%;
 max-width:900px;
 margin:auto;
 }
@@ -37,14 +35,15 @@ margin:auto;
 display:flex;
 justify-content:space-between;
 align-items:center;
-margin-bottom:20px;
 gap:10px;
+margin-bottom:20px;
 flex-wrap:wrap;
 }
 
 h1{
 font-size:32px;
 color:#60a5fa;
+word-break:break-word;
 }
 
 .userinfo{
@@ -55,9 +54,14 @@ font-size:14px;
 .card{
 background:#1e293b;
 padding:18px;
-border-radius:18px;
+border-radius:16px;
 margin-bottom:20px;
-box-shadow:0 0 15px rgba(0,0,0,0.3);
+box-shadow:0 0 10px rgba(0,0,0,0.3);
+}
+
+h2{
+margin-bottom:15px;
+font-size:22px;
 }
 
 input,
@@ -66,7 +70,7 @@ width:100%;
 padding:14px;
 margin-top:12px;
 border:none;
-border-radius:12px;
+border-radius:10px;
 background:#334155;
 color:white;
 font-size:16px;
@@ -85,15 +89,15 @@ outline:2px solid #3b82f6;
 
 button{
 margin-top:12px;
-padding:14px;
+padding:14px 18px;
 border:none;
-border-radius:12px;
+border-radius:10px;
 background:#3b82f6;
 color:white;
-font-size:16px;
 cursor:pointer;
-transition:0.2s;
+font-size:16px;
 width:100%;
+transition:0.2s;
 }
 
 button:hover{
@@ -111,52 +115,34 @@ background:#dc2626;
 .post{
 background:#1e293b;
 padding:18px;
-border-radius:18px;
-margin-top:20px;
-box-shadow:0 0 15px rgba(0,0,0,0.2);
+border-radius:16px;
+margin-top:18px;
+word-break:break-word;
+box-shadow:0 0 10px rgba(0,0,0,0.2);
 }
 
 .username{
-font-weight:bold;
 color:#60a5fa;
-font-size:17px;
+font-weight:bold;
+font-size:16px;
 }
 
 .content{
 margin-top:12px;
 line-height:1.7;
+font-size:16px;
 white-space:pre-wrap;
 }
 
 .time{
-margin-top:12px;
+margin-top:10px;
 font-size:13px;
 color:#94a3b8;
 }
 
-.post-image{
-width:100%;
-margin-top:15px;
-border-radius:14px;
-max-height:500px;
-object-fit:cover;
-}
+/* 手机端优化 */
 
-.delete-btn{
-background:#ef4444;
-margin-top:15px;
-}
-
-.notice{
-background:#172554;
-padding:15px;
-border-radius:14px;
-margin-bottom:20px;
-line-height:1.7;
-border:1px solid #2563eb;
-}
-
-@media(max-width:768px){
+@media (max-width:768px){
 
 body{
 padding:10px;
@@ -168,10 +154,44 @@ font-size:24px;
 
 .card{
 padding:15px;
+border-radius:14px;
 }
 
 button{
+font-size:15px;
 padding:13px;
+}
+
+input,
+textarea{
+font-size:16px;
+}
+
+.post{
+padding:15px;
+}
+
+}
+
+/* 超小屏优化 */
+
+@media (max-width:480px){
+
+.topbar{
+flex-direction:column;
+align-items:flex-start;
+}
+
+h1{
+font-size:22px;
+}
+
+.userinfo{
+font-size:13px;
+}
+
+button{
+padding:12px;
 }
 
 }
@@ -186,7 +206,7 @@ padding:13px;
 
 <div class="topbar">
 
-<h1>Brilliant Daily</h1>
+<h1>Brilliant Player Forum</h1>
 
 <div class="userinfo" id="userinfo">
 未登录
@@ -194,28 +214,26 @@ padding:13px;
 
 </div>
 
-<div class="notice">
-
-分享你的日常<br>
-支持图片上传<br>
-支持删除动态<br>
-璀璨之光论坛
-
-</div>
-
-<!-- 登录 -->
-
 <div class="card">
 
-<h2>登录</h2>
+<h2>注册 / 登录</h2>
 
 <input
-type="text"
-id="username"
-placeholder="输入用户名">
+type="email"
+id="email"
+placeholder="邮箱">
+
+<input
+type="password"
+id="password"
+placeholder="密码">
+
+<button onclick="register()">
+注册
+</button>
 
 <button onclick="login()">
-进入社区
+登录
 </button>
 
 <button
@@ -228,23 +246,15 @@ onclick="logout()">
 
 </div>
 
-<!-- 发布 -->
-
 <div class="card">
-
-<h2>发布动态</h2>
 
 <textarea
 id="message"
-placeholder="分享今天发生的事情..."></textarea>
-
-<input
-type="file"
-id="imageInput"
-accept="image/*">
+rows="4"
+placeholder="输入帖子内容..."></textarea>
 
 <button onclick="sendPost()">
-发布动态
+发布帖子
 </button>
 
 </div>
@@ -253,32 +263,172 @@ accept="image/*">
 
 </div>
 
-<script>
+<script type="module">
 
-const SUPABASE_URL =
-"https://geladutxkynmwwuwecae.supabase.co";
+import { initializeApp }
 
-const SUPABASE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdlbGFkdXR4a3lubXd3dXdlY2FlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjIxNDIsImV4cCI6MjA5NDgzODE0Mn0.tIotLyQKd-lwg83Pv-8ART4lGUsk4KHRG8WYjcMTbXg";
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-const supabase =
-window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+import {
+
+getFirestore,
+collection,
+addDoc,
+query,
+orderBy,
+onSnapshot
+
+}
+
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged
+
+}
+
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyCVXeD0tqRGs0naZlYV84y1O1YRPq3kYpk",
+
+authDomain:
+"brilliant-player-forum-900b2.firebaseapp.com",
+
+projectId:
+"brilliant-player-forum-900b2",
+
+storageBucket:
+"brilliant-player-forum-900b2.firebasestorage.app",
+
+messagingSenderId:
+"241015928791",
+
+appId:
+"1:241015928791:web:0b79d82f74de79bce37d92",
+
+measurementId:
+"G-J9D9H1BG7R"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getFirestore(app);
+
+const auth =
+getAuth(app);
+
+let currentUser = null;
+
+/* 注册 */
+
+window.register = async function(){
+
+const email =
+document.getElementById("email").value;
+
+const password =
+document.getElementById("password").value;
+
+if(!email || !password){
+
+alert("请输入邮箱和密码");
+
+return;
+
+}
+
+try{
+
+await createUserWithEmailAndPassword(
+
+auth,
+email,
+password
+
 );
 
-let currentUser =
-localStorage.getItem("daily_user");
+alert("注册成功");
+
+}catch(err){
+
+alert(err.message);
+
+}
+
+}
+
+/* 登录 */
+
+window.login = async function(){
+
+const email =
+document.getElementById("email").value;
+
+const password =
+document.getElementById("password").value;
+
+if(!email || !password){
+
+alert("请输入邮箱和密码");
+
+return;
+
+}
+
+try{
+
+await signInWithEmailAndPassword(
+
+auth,
+email,
+password
+
+);
+
+alert("登录成功");
+
+}catch(err){
+
+alert(err.message);
+
+}
+
+}
+
+/* 退出 */
+
+window.logout = async function(){
+
+await signOut(auth);
+
+alert("已退出登录");
+
+}
+
+/* 用户状态 */
+
+onAuthStateChanged(auth,(user)=>{
+
+currentUser = user;
 
 const userinfo =
 document.getElementById("userinfo");
 
-function updateUser(){
-
-if(currentUser){
+if(user){
 
 userinfo.innerHTML =
-"当前用户：" + currentUser;
+`当前用户：${user.email}`;
 
 }else{
 
@@ -287,55 +437,9 @@ userinfo.innerHTML =
 
 }
 
-}
+});
 
-updateUser();
-
-/* 登录 */
-
-window.login = function(){
-
-const username =
-document.getElementById("username").value;
-
-if(!username){
-
-alert("请输入用户名");
-
-return;
-
-}
-
-localStorage.setItem(
-"daily_user",
-username
-);
-
-currentUser = username;
-
-updateUser();
-
-alert("登录成功");
-
-}
-
-/* 退出 */
-
-window.logout = function(){
-
-localStorage.removeItem(
-"daily_user"
-);
-
-currentUser = null;
-
-updateUser();
-
-alert("已退出登录");
-
-}
-
-/* 发布 */
+/* 发帖 */
 
 window.sendPost = async function(){
 
@@ -350,131 +454,55 @@ return;
 const message =
 document.getElementById("message").value;
 
-const imageFile =
-document.getElementById("imageInput").files[0];
+if(!message){
 
-let imageUrl = "";
-
-if(imageFile){
-
-const fileName =
-Date.now() + "_" + imageFile.name;
-
-const { error:uploadError } =
-await supabase.storage
-
-.from("images")
-
-.upload(fileName,imageFile);
-
-if(uploadError){
-
-alert("图片上传失败");
-
-console.log(uploadError);
+alert("请输入内容");
 
 return;
 
 }
 
-imageUrl =
+await addDoc(
 
-`${SUPABASE_URL}/storage/v1/object/public/images/${fileName}`;
+collection(db,"posts"),
 
-}
+{
 
-const { error } =
-await supabase
+username:
+currentUser.email,
 
-.from("posts")
+message,
 
-.insert([{
-
-username:currentUser,
-
-message:message,
-
-image:imageUrl
-
-}]);
-
-if(error){
-
-alert("发布失败");
-
-console.log(error);
-
-return;
+time:Date.now()
 
 }
+
+);
 
 document.getElementById("message").value = "";
 
-document.getElementById("imageInput").value = "";
-
-loadPosts();
-
 }
 
-/* 删除动态 */
+/* 实时帖子 */
 
-async function deletePost(id){
+const q = query(
 
-const confirmDelete =
-confirm("确定删除这个动态吗？");
+collection(db,"posts"),
 
-if(!confirmDelete) return;
+orderBy("time","desc")
 
-const { error } =
-await supabase
+);
 
-.from("posts")
-
-.delete()
-
-.eq("id",id);
-
-if(error){
-
-alert("删除失败");
-
-return;
-
-}
-
-loadPosts();
-
-}
-
-/* 加载动态 */
-
-async function loadPosts(){
-
-const { data,error } =
-await supabase
-
-.from("posts")
-
-.select("*")
-
-.order("created_at",{
-ascending:false
-});
-
-if(error){
-
-console.log(error);
-
-return;
-
-}
+onSnapshot(q,(snapshot)=>{
 
 const postsDiv =
 document.getElementById("posts");
 
 postsDiv.innerHTML = "";
 
-data.forEach(post=>{
+snapshot.forEach((doc)=>{
+
+const post = doc.data();
 
 postsDiv.innerHTML += `
 
@@ -485,35 +513,12 @@ ${post.username}
 </div>
 
 <div class="content">
-${post.message || ""}
+${post.message}
 </div>
-
-${post.image ?
-
-`<img
-src="${post.image}"
-class="post-image">`
-
-: ""}
 
 <div class="time">
-
-${new Date(post.created_at)
-.toLocaleString()}
-
+${new Date(post.time).toLocaleString()}
 </div>
-
-${post.username === currentUser ?
-
-`<button
-class="delete-btn"
-onclick="deletePost('${post.id}')">
-
-删除动态
-
-</button>`
-
-: ""}
 
 </div>
 
@@ -521,11 +526,7 @@ onclick="deletePost('${post.id}')">
 
 });
 
-}
-
-loadPosts();
-
-setInterval(loadPosts,3000);
+});
 
 </script>
 
